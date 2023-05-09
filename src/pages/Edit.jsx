@@ -1,23 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { updateUser, getOneUser } from "../redux/UserSlice";
+import { updateUser, getOneUser, getAllUsers } from "../redux/UserSlice";
 
 const Edit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-    const users = useSelector((state) => state.UserReducer.users);
-    console.log(users)
-    console.log(id);
-    // const currentUser = users.find((user) => user._id === id);
-    // console.log(currentUser)
   
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [age, setAge] = useState("");
+  const [age, setAge] = useState(0);
+
 useEffect(() => {
   dispatch(getOneUser(id)).then((res) => {
+    console.log(res)
     setName(res.payload.name);
     setEmail(res.payload.email);
     setAge(res.payload.age);
@@ -26,15 +23,11 @@ useEffect(() => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const updatedUser = {
-      name,
-      email,
-      age,
-    };
-    console.log(updateUser)
-    dispatch(updateUser(updatedUser)).then(() => 
-      navigate("/")
-    );
+    dispatch(updateUser({ _id: id, name, age, email })).then(() => {
+      navigate("/");
+      console.log('getting users',dispatch(getAllUsers(updateUser))); // Fetch the updated user list after the user is updated
+      dispatch(getAllUsers(updateUser)); // Fetch the updated user list after the user is updated
+    });
   };
 
 

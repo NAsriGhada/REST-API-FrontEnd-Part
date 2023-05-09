@@ -47,11 +47,11 @@ export const deleteUser = createAsyncThunk("user/deleteUser", async (id) => {
 
 export const updateUser = createAsyncThunk(
   "user/updateUser",
-  async ({ id, updatedUser }) => {
+  async ({ _id, name, age, email }) => {
     try {
       const response = await axios.put(
-        `http://localhost:8080/api/update/user/${id}`,
-        updatedUser
+        `http://localhost:8080/api/update/user/${_id}`,
+        { name, age, email }
       );
       return response.data;
     } catch (error) {
@@ -92,6 +92,24 @@ const userSlice = createSlice({
         state.users = action.payload;
       })
       .addCase(getAllUsers.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+
+      // get one user case
+      .addCase(getOneUser.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getOneUser.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        // Find the index of the old user object
+        const index = state.users.findIndex(
+          (user) => user._id === action.payload._id
+        );
+        // Replace the old user object with the updated user object
+        state.users[index] = action.payload;
+      })
+      .addCase(getOneUser.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })

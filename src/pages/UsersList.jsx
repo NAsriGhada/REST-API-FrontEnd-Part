@@ -5,7 +5,11 @@ import { Link } from 'react-router-dom';
 
 
 const UsersList = () => {
-  const users = useSelector((state) => state.UserReducer.users);
+  const users = useSelector((state) => {
+    console.log(state);
+    return state.UserReducer.users;
+  });
+
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getAllUsers());
@@ -29,6 +33,7 @@ const UsersList = () => {
             </tr>
           </thead>
           <tbody>
+            {console.log(users)}
             {users.map((user) => (
               <tr key={user._id}>
                 <th scope="row">{user._id}</th>
